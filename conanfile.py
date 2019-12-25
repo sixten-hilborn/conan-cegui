@@ -94,6 +94,11 @@ class CeguiConan(ConanFile):
         if self.settings.compiler == 'Visual Studio' and int(str(self.settings.compiler.version)) >= 14:
             tools.replace_in_file('{0}/cegui/include/CEGUI/PropertyHelper.h'.format(self.source_subfolder), '#define snprintf _snprintf', '')
 
+        # Don't put .so files in {CMAKE_PROJECT_NAME} directory
+        tools.replace_in_file('{0}/CMakeLists.txt'.format(self.source_subfolder),
+            'set( CEGUI_MODULE_INSTALL_DIR "${CEGUI_LIB_INSTALL_DIR}/${CMAKE_PROJECT_NAME}-${CEGUI_VERSION_MAJOR}.${CEGUI_VERSION_MINOR}" )',
+            'set( CEGUI_MODULE_INSTALL_DIR "${CEGUI_LIB_INSTALL_DIR}" )')
+
         cmake = CMake(self)
         cmake.definitions['CMAKE_POSITION_INDEPENDENT_CODE'] = self.options.fPIC
         cmake.definitions['CEGUI_SAMPLES_ENABLED'] = False
